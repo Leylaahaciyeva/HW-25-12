@@ -10,12 +10,9 @@ const categoryItems=document.querySelectorAll("#categoryList li")
 const colorItems=document.querySelectorAll("#colorList li")
 const sizeItems=document.querySelectorAll("#sizeList li")
 
-
 const colorItemDots=document.querySelectorAll("#colorList li span")
 const productsCount=document.getElementById("products-count")
 const productsElement=document.getElementById("products")
-
-
 
 const filteredCategories=[];
 const filteredColors=[];
@@ -42,7 +39,11 @@ categoryItems.forEach((item)=>{
         else{
             filteredCategories.push(category)
         }
+
+        displayProducts()
     })
+
+
 });
 
 
@@ -60,6 +61,8 @@ colorItems.forEach((item,index,array)=>{
         else{
             filteredColors.push(color)
         }
+
+        displayProducts()
     })
 });
 
@@ -78,50 +81,11 @@ sizeItems.forEach((item,index,array)=>{
         else{
             filteredSizes.push(size)
         }
+        displayProducts()
     })
 });
 
-productsCount.textContent=products.length;
 
-products.forEach((product)=>{
-
-    const pName=product.name.split(" ").map((name)=>name[0].toUpperCase()+name.slice(1)).join(" ")
- 
-     productsElement.innerHTML+=`<div class="col-span-4 cursor-pointer productItem">
-     <a href="./productPage/product.html">
-       <div class="mb-4 border border-neutral-200 rounded-lg">
-         <img
-           src="${product.image}"
-           alt=""
-           class="w-full h-[500px]"
-         />
-       </div>
-       <div class="flex justify-between font-bold">
-         <div>
-           <h1 class="text-xl">${pName}</h1>
-           <p class="text-neutral-500">${product.category}</p>
-         </div>
-         <h1 class="text-2xl">
-           <span>${product.price}</span>
-           AZN
-         </h1>
-       </div>
-     </a>
-     </div> 
-     `
- 
-     const productItems=document.querySelectorAll(".productItem")
-     productItems.forEach((productItem,index)=>{
-       productItem.addEventListener("click",(event)=>{
- 
-        const selectedProduct=products[index];
- 
-        localStorage.setItem("product",JSON.stringify(selectedProduct))
-       })
-     })
- 
- });
- 
 
 const displayProducts=()=>{
     const filteredProducts=products.filter((product)=>
@@ -131,12 +95,57 @@ const displayProducts=()=>{
 
         const categoryCondition=filteredCategories.length ===0 || filteredCategories.includes(product.category);
         const colorCondition=filteredColors.length===0 || filteredColors.includes(product.color);
-        const sizeCondition=filteredSizes.some((size)=>{product.sizes.includes(size)})
+        const sizeCondition=filteredSizes.length === 0 || product.sizes.some((size)=>filteredSizes.includes(size))
 
 
         return colorCondition && categoryCondition && sizeCondition;
 
     })
-    console.log(filteredProducts);
+
+    productsElement.innerHTML="";
+    productsCount.textContent=filteredProducts.length;
+
+    filteredProducts.forEach((product)=>{
+
+      const pName=product.name.split(" ").map((name)=>name[0].toUpperCase()+name.slice(1)).join(" ")
+      
+    
+       productsElement.innerHTML+=`<div class="col-span-4 cursor-pointer productItem">
+       <a href="./productPage/product.html">
+         <div class="mb-4 border border-neutral-200 rounded-lg">
+           <img
+             src="${product.image}"
+             alt=""
+             class="w-full h-[500px]"
+           />
+         </div>
+         <div class="flex justify-between font-bold">
+           <div>
+             <h1 class="text-xl">${pName}</h1>
+             <p class="text-neutral-500">${product.category}</p>
+           </div>
+           <h1 class="text-2xl">
+             <span>${product.price}</span>
+             AZN
+           </h1>
+         </div>
+       </a>
+       </div> 
+       `
+    
+       const productItems=document.querySelectorAll(".productItem")
+       productItems.forEach((productItem,index)=>{
+         productItem.addEventListener("click",(event)=>{
+    
+          const selectedProduct=filteredProducts[index];
+    
+          localStorage.setItem("product",JSON.stringify(selectedProduct))
+         })
+       })
+    
+    });
+
 };
 displayProducts();
+
+
